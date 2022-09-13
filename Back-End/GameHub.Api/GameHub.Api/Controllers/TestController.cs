@@ -12,7 +12,7 @@ namespace GameHub.Api.Controllers
         [HttpGet("Test")]
         public IActionResult Tester()
         {
-            return Ok("hello");
+            return Ok(User.Identity.IsAuthenticated);
         }
     }
 }
