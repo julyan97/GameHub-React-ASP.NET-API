@@ -2,6 +2,7 @@
 using GameHub.Common.AuthModels.RequestModels;
 using GameHub.Common.AuthModels.ResponseModels;
 using GameHub.Common.GloballyNeededModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -104,7 +105,7 @@ public class AuthController : ControllerBase
             {
 
                 string jwtToken = JwtHelper.GenerateJwtToken(existingUser, _jwtConfig);
-
+                Response.Cookies.Append("jwt", jwtToken);
                 return Ok(new RegistrationResponse()
                 {
                     Result = true,

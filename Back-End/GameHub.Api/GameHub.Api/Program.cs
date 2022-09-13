@@ -73,6 +73,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.Use(async (context, next) =>
+{
+    var token = context.Request.Cookies["jwt"];
+    if (!string.IsNullOrEmpty(token))
+    {
+        context.Request.Headers.Add("Authorization", "Bearer " + token);
+    }
+    await next();
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
