@@ -1,3 +1,4 @@
+using GameHub.Api.Middlewares;
 using GameHub.Common.GloballyNeededModels;
 using GameHub.DAL.Data;
 using Microsoft.AspNetCore.Authentication;
@@ -73,15 +74,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Use(async (context, next) =>
-{
-    var token = context.Request.Cookies["jwt"];
-    if (!string.IsNullOrEmpty(token))
-    {
-        context.Request.Headers.Add("Authorization", "Bearer " + token);
-    }
-    await next();
-});
+
+//Custom middlewares
+app.ConfigureAuthenticationByJwtBearer();
+
+
+//-----------
 
 app.UseHttpsRedirection();
 
