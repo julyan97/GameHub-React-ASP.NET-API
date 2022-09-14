@@ -146,5 +146,23 @@ public class AuthController : ControllerBase
             message = "success"
         });
     }
+
+    [HttpGet("IsAuth")]
+    public IActionResult IsAuthenticated()
+    {
+        string email = string.Empty;
+        if (User.Claims != null && User.Claims.Count() > 0)
+        {
+            var claims = User.Claims.ToList();
+            email = claims[1].Value ?? string.Empty;
+        }
+        
+
+        return Ok(new
+        {
+            Authenticated = User.Identity.IsAuthenticated,
+            UserName = email,
+        });
+    }
 }
 

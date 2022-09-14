@@ -185,6 +185,16 @@ form {
   font-family: 'Courier New', Courier, monospace;
 }
 
+.main-div{
+
+  position: relative;
+  left: 10%;
+  margin-top: 10%;
+  color: white;
+  
+  
+}
+
 @media screen and (max-width: 361px) {
   #info-label {
       width: 100%;

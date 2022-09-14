@@ -12,5 +12,5 @@ li{
 }
 
 ul{
-    justify-content: flex-end!important;
+    text-align: end;
 }
