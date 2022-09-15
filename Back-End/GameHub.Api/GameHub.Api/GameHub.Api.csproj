@@ -30,6 +30,7 @@
     <ProjectReference Include="..\GameHub.BL\GameHub.BL.csproj" />
     <ProjectReference Include="..\GameHub.Common\GameHub.Common.csproj" />
     <ProjectReference Include="..\GameHub.DAL\GameHub.DAL.csproj" />
+    <ProjectReference Include="..\GameHub.Hub\GameHub.SignalR.csproj" />
   </ItemGroup>
 
 </Project>

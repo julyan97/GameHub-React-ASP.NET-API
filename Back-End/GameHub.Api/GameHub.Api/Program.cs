@@ -2,13 +2,10 @@ using GameHub.Api.Middlewares;
 using GameHub.Common.GloballyNeededModels;
 using GameHub.Common.Models;
 using GameHub.DAL.Data;
-using Microsoft.AspNetCore.Authentication;
+using GameHub.SignalR.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -17,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
+
+//SignalR
+builder.Services.AddSignalR();
+
 
 //Cors
 builder.Services.AddCors(options =>
@@ -110,5 +111,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/notifivation");
 
 app.Run();
