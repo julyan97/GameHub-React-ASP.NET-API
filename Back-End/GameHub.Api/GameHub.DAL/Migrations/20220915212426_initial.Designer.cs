@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameHub.DAL.Migrations
 {
     [DbContext(typeof(GameHubDbContext))]
-    [Migration("20220915204528_CreateDalModels")]
-    partial class CreateDalModels
+    [Migration("20220915212426_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
