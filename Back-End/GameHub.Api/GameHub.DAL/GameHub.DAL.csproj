@@ -21,4 +21,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GameHub.Common\GameHub.Common.csproj" />
+  </ItemGroup>
+
 </Project>

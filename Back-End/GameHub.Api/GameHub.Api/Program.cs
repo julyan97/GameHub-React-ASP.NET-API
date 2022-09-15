@@ -1,5 +1,6 @@
 using GameHub.Api.Middlewares;
 using GameHub.Common.GloballyNeededModels;
+using GameHub.Common.Models;
 using GameHub.DAL.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -66,7 +67,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddDefaultIdentity<IdentityUser>(op =>
+builder.Services.AddDefaultIdentity<User>(op =>
 {
     op.SignIn.RequireConfirmedAccount = true;
 })
