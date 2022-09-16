@@ -2,6 +2,7 @@
 using GameHub.Common.AuthModels.RequestModels;
 using GameHub.Common.AuthModels.ResponseModels;
 using GameHub.Common.GloballyNeededModels;
+using GameHub.Common.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,10 @@ namespace GameHub.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
     private readonly JwtConfig _jwtConfig;
 
-    public AuthController(UserManager<IdentityUser> userManage, IOptionsMonitor<JwtConfig> optionsMonitor)
+    public AuthController(UserManager<User> userManage, IOptionsMonitor<JwtConfig> optionsMonitor)
     {
         this._userManager=userManage;
         _jwtConfig = optionsMonitor.CurrentValue;
@@ -46,7 +47,7 @@ public class AuthController : ControllerBase
                 });
             }
 
-            var newUser = new IdentityUser() { Email = user.Email, UserName = user.Email };
+            var newUser = new User() { Email = user.Email, UserName = user.Email };
             var isCreated = await _userManager.CreateAsync(newUser, user.Password);
             if (isCreated.Succeeded)
             {

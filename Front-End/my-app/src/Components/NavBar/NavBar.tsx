@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import logo from "../../Root/img/output-onlinepngtools.png"
 import { AuthService } from '../../Services/AuthService';
+import { OutGoingNotificationMethods } from '../../Services/SignalRHelpers/OutGoingNotificationMethods';
+import { SignalRService } from '../../Services/SignalRHelpers/SignalRService';
 import style from "./style.module.css"
 export interface INavBarProps {
 }
@@ -9,6 +11,7 @@ export interface INavBarProps {
 export default function NavBar(props: INavBarProps) {
     const [authenticated, setAuthenticated] = useState(false);
     const [userName, setUserName] = useState("");
+    const [Counter, setCounter] = useState(0)
 
     useEffect(() => {
         AuthService.isAuthenticated()
@@ -34,6 +37,17 @@ export default function NavBar(props: INavBarProps) {
         document.location.href = "/";
     }
 
+    const NotificationsUpdate = ()=>{
+        setCounter(Counter + 1);
+    }
+
+    //SignalR Begin
+
+    SignalRService.RegisterIncomingMethods([
+        { name: "NotificationsUpdate", method: NotificationsUpdate }
+    ],false);
+
+    //SignalR End
     return (
         <>
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" />
@@ -42,6 +56,9 @@ export default function NavBar(props: INavBarProps) {
             <link rel="stylesheet" href="../../Root/css/index.css" />
             <link rel="stylesheet" href="../../Root/css/style.css" />
             <nav className="p-2" style={{ backgroundColor: '#1a031d62' }}>
+
+                Counter is: {Counter} <br />
+                <button onClick={()=>OutGoingNotificationMethods.SendNotification()}>Press</button>
                 <div style={{ float: 'left', display: 'inline-block' }}>
                     <a style={{ color: 'rgb(255, 255, 255)', padding: 0, marginLeft: '10%' }} className={style.nav_link} href="/home">
                         <img src={logo} style={{ height: '2em', width: '9em' }} />

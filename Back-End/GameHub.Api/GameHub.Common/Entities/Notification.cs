@@ -10,13 +10,13 @@ namespace GameHub.Common.Models
 {
     public class Notification : BaseEntity, IEquatable<Notification>
     {
-        public Guid GameEventId { get; set; }
+        public string GameEventId { get; set; }
 
         [Required]
-        public Guid SenderId { get; set; }
+        public string SenderId { get; set; }
 
         [Required]
-        public Guid RecipientId { get; set; }
+        public string RecipientId { get; set; }
 
         [Required]
         public string Message { get; set; }

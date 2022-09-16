@@ -10,9 +10,9 @@ namespace GameHub.Common.Models
 {
     public class Post: BaseEntity
     {
-        public Guid CategoryId { get; set; }
+        public string CategoryId { get; set; }
 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
 
         [Required]
         public string Text { get; set; }

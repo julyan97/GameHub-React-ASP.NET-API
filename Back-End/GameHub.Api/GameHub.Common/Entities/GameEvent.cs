@@ -10,9 +10,9 @@ namespace GameHub.Common.Models
 {
     public class GameEvent : BaseEntity
     {
-        public Guid OwnerId { get; set; }
+        public string OwnerId { get; set; }
 
-        public Guid GameId { get; set; }
+        public string GameId { get; set; }
 
         public string DiscordUrl { get; set; }
 

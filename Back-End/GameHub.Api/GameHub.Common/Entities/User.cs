@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GameHub.Common.Models
 {
-    public class User : IdentityUser<Guid>
+    public class User : IdentityUser
     {
         public bool IsDeleted { get; set; }
 

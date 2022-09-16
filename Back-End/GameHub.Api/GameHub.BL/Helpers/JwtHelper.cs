@@ -1,4 +1,5 @@
 ﻿using GameHub.Common.GloballyNeededModels;
+using GameHub.Common.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,7 +10,7 @@ namespace GameHub.BL.Helpers
 {
     public static class JwtHelper
     {
-        public static string GenerateJwtToken(IdentityUser user, JwtConfig _jwtConfig)
+        public static string GenerateJwtToken(User user, JwtConfig _jwtConfig)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 

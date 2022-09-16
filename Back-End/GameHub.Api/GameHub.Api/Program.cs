@@ -106,12 +106,13 @@ app.ConfigureAuthenticationByJwtBearer();
 //-----------
 
 app.UseHttpsRedirection();
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<NotificationHub>("/notifivation");
+app.MapHub<NotificationHub>("/hubs/notification");
 
 app.Run();

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GameHub.DAL.Data
 {
-    public class GameHubDbContext : IdentityDbContext<User,IdentityRole<Guid>,Guid>
+    public class GameHubDbContext : IdentityDbContext<User>
     {
         public DbSet<Game> Games { get; set; }
         public DbSet<GameEvent> GameEvents { get; set; }
