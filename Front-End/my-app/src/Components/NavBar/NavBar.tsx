@@ -60,7 +60,7 @@ export default function NavBar(props: INavBarProps) {
             <link rel="stylesheet" href="../../Root/css/style.css" />
             <nav className="p-2" style={{ backgroundColor: '#1a031d62' }}>
 
-                <div style={{ float: 'left', display: 'inline-block' }}>
+                <div style={{ float: 'left', display: 'inline-block',    margin: "-10px" }}>
                     <a style={{ color: 'rgb(255, 255, 255)', padding: 0, marginLeft: '10%' }} className={style.nav_link} href="/home">
                         <img src={logo} style={{ height: '2em', width: '9em' }} />
                     </a>
