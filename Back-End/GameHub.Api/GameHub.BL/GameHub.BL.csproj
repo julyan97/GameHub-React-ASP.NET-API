@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameHub.Common\GameHub.Common.csproj" />
+    <ProjectReference Include="..\GameHub.DAL\GameHub.DAL.csproj" />
   </ItemGroup>
 
 </Project>
