@@ -12,10 +12,18 @@ import { Login } from './Components/Login/Login';
 import { Register } from './Components/Register/Register';
 import { IIncomingConnection, SignalRService } from './Services/SignalRHelpers/SignalRService';
 import { OutGoingNotificationMethods } from './Services/SignalRHelpers/OutGoingNotificationMethods';
+import { IContextModel } from './Models/Models';
+
+const Context = React.createContext<IContextModel>({
+  setUserName: null,
+  username: "",
+  connection : null
+});
 
 function App() {
   const [Connection, setConnection] = useState(null);
   const [Message, setMessage] = useState("July");
+  const [Name, setName] = useState("")
 
   //SignalR SetUp Begin
   const ReceiveMessage = (message: string) => {
@@ -31,18 +39,25 @@ function App() {
 
 
   return (
-    <div className="App">
-      <h1>{Message}</h1>
-      <button onClick={() => OutGoingNotificationMethods.SendMessage("pesky")}>Button</button>
-      <NavBar />
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <Context.Provider value={{
+      setUserName: setName,
+      username: Name,
+      connection: Connection
+    }}>
+
+      <div className="App">
+        <h1>{Message}</h1>
+        <button onClick={() => OutGoingNotificationMethods.SendMessage("pesky")}>Button</button>
+        <NavBar />
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </Context.Provider>
   );
 }
 

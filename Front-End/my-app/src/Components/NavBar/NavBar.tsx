@@ -38,7 +38,9 @@ export default function NavBar(props: INavBarProps) {
     }
 
     const NotificationsUpdate = ()=>{
+         console.log("here counter: "+Counter)
         setCounter(Counter + 1);
+       
     }
 
     //SignalR Begin
@@ -50,8 +52,6 @@ export default function NavBar(props: INavBarProps) {
     //SignalR End
     return (
         <>
-            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" />
-
 
             <link rel="stylesheet" href="../../Root/css/index.css" />
             <link rel="stylesheet" href="../../Root/css/style.css" />
