@@ -83,8 +83,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //services
-builder.Services.AddScoped<IBaseService, BaseService>();
-builder.Services.AddScoped<IGameEventService, GameEventService>();
 
 var app = builder.Build();
 
