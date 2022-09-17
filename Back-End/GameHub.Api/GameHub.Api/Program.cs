@@ -1,4 +1,6 @@
 using GameHub.Api.Middlewares;
+using GameHub.BL.Services;
+using GameHub.BL.Services.IServices;
 using GameHub.Common.GloballyNeededModels;
 using GameHub.Common.Models;
 using GameHub.DAL.Data;
@@ -80,6 +82,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//services
+builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<IGameEventService, GameEventService>();
 
 var app = builder.Build();
 
