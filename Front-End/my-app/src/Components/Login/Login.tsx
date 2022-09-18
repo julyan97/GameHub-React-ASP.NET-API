@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../App';
+import { AuthService } from '../../Services/AuthService';
 
 export interface ILoginProps {
 }
@@ -10,20 +12,15 @@ export function Login(props: ILoginProps) {
     const Password: any = useRef(null);
     const RememberMe: any = useRef(false);
     const navigate = useNavigate();
-    const onLogin = async (e: any) => {
-        e.preventDefault();
-        const res = await fetch("https://localhost:7285/api/Auth/Login", {
-            method: "Post",
-            headers: {
-                'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            credentials: "include",
-            body: JSON.stringify({ Email: username.current.value, Password: Password.current.value })
+    const auth = useContext(AuthContext);
+    
+    const Login = (e: any) =>{
+        AuthService.onLogin(e, username.current.value, Password.current.value)
+        .then(res =>{
+            auth.isAuthenticated = res.result;
+            navigate("/");
+            console.log(res.result)
         })
-        //navigate("/");
-        document.location.href = "/";
-        console.log(res.json)
     }
     return (
         <>
@@ -64,7 +61,7 @@ export function Login(props: ILoginProps) {
                             <label style={{ color: "forestgreen" }}>Remember me</label>
                         </div>
                     </div>
-                    <button onClick={(e) => onLogin(e)} className="btn btn-primary border-0 bg-dark btn-lg" >
+                    <button onClick={(e) => Login(e)} className="btn btn-primary border-0 bg-dark btn-lg" >
                         Login
                     </button>
                 </form>

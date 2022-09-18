@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../../App';
 import { AuthService } from '../../Services/AuthService';
 
 export interface IHomeProps {
@@ -7,11 +8,13 @@ export interface IHomeProps {
 
 export function Home(props: IHomeProps) {
     const [authenticated, setAuthenticated] = useState(false)
+    
+    const auth = useContext(AuthContext)
 
     React.useEffect(() => {
         AuthService.isAuthenticated()
-        .then(data => setAuthenticated(data.authenticated));
-    }, [])
+        .then(data => auth.setIsAuthentication(data.authenticated));
+    }, [authenticated])
     
     return (
         <>
@@ -24,7 +27,7 @@ export function Home(props: IHomeProps) {
                 <p className="lead">
                     This is the place where you can find your dream team.
                 </p>
-                {!authenticated ? (<>
+                {!auth.isAuthenticated ? (<>
                 <hr className="my-4" />
                 <p>But first, you need to navigate to one of the following pages.</p>
                 <a

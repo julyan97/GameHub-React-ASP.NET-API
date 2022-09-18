@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import NavBar from './Components/NavBar/NavBar';
@@ -14,10 +14,15 @@ import { IIncomingConnection, SignalRService } from './Services/SignalRHelpers/S
 import { OutGoingNotificationMethods } from './Services/SignalRHelpers/OutGoingNotificationMethods';
 import { IContextModel } from './Models/Models';
 import { CreateEvent } from './Components/CreateEvent/CreateEvent';
+import { AuthService } from './Services/AuthService';
 
-const Context = React.createContext<IContextModel>({
+export const AuthContext = React.createContext<IContextModel>({
   setUserName: null,
   username: "",
+
+  setIsAuthentication: null,
+  isAuthenticated :false,
+
   connection : null
 });
 
@@ -25,30 +30,47 @@ function App() {
   const [Connection, setConnection] = useState(null);
   const [Message, setMessage] = useState("July");
   const [Name, setName] = useState("")
+  const [Authentication, setAuthentication] = useState(false)
+  
+  const auth = useContext(AuthContext)
+
+  useEffect(() => {
+    AuthService.isAuthenticated()
+        .then(data => {
+            setAuthentication(data.authenticated)
+            setName(data.userName);
+
+            // console.log(data.userName);
+            // console.log(data.authenticated);
+            // console.log(auth.isAuthenticated);
+        })
+})
 
   //SignalR SetUp Begin
-  // const ReceiveMessage = (message: string) => {
-  //   setMessage(message)
-  // }
+  const ReceiveMessage = (message: string) => {
+    //setMessage(message)
+  }
 
-  // SignalRService.RegisterIncomingMethods([
-  //   { name: "ReceiveMessage", method: ReceiveMessage },
-  // ], true, setConnection, Connection);
+  SignalRService.RegisterIncomingMethods([
+    { name: "ReceiveMessage", method: ReceiveMessage },
+  ], true, setConnection, Connection);
 
 
   //SignalR SetUp End
 
 
   return (
-    <Context.Provider value={{
+    <AuthContext.Provider value={{
       setUserName: setName,
       username: Name,
+      setIsAuthentication: setAuthentication,
+      isAuthenticated : Authentication,
       connection: Connection
     }}>
 
       <div className="App">
-        <NavBar />
         <BrowserRouter>
+        <NavBar />
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
@@ -57,7 +79,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </div>
-    </Context.Provider>
+    </AuthContext.Provider>
   );
 }
 
