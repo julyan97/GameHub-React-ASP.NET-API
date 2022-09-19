@@ -1,4 +1,4 @@
-﻿using GameHub.Common.Models;
+﻿using GameHub.Common.Entities;
 using GameHub.DAL.Data.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

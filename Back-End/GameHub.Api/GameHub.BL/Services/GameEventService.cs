@@ -1,5 +1,5 @@
 ﻿using GameHub.BL.Services.IServices;
-using GameHub.Common.Models;
+using GameHub.Common.Entities;
 using GameHub.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;

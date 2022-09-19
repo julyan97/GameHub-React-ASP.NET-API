@@ -1,8 +1,8 @@
 ﻿using GameHub.BL.Helpers;
 using GameHub.Common.AuthModels.RequestModels;
 using GameHub.Common.AuthModels.ResponseModels;
+using GameHub.Common.Entities;
 using GameHub.Common.GloballyNeededModels;
-using GameHub.Common.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

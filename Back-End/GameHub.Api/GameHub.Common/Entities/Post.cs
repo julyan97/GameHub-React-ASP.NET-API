@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameHub.Common.Models
+namespace GameHub.Common.Entities
 {
-    public class Post: BaseEntity
+    public class Post : BaseEntity
     {
         public string CategoryId { get; set; }
 

@@ -1,5 +1,5 @@
-﻿using GameHub.Common.GloballyNeededModels;
-using GameHub.Common.Models;
+﻿using GameHub.Common.Entities;
+using GameHub.Common.GloballyNeededModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

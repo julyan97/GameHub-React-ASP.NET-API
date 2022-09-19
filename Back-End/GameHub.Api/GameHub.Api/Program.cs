@@ -1,9 +1,11 @@
 using GameHub.Api.Middlewares;
 using GameHub.BL.Services;
 using GameHub.BL.Services.IServices;
+using GameHub.Common.Entities;
 using GameHub.Common.GloballyNeededModels;
-using GameHub.Common.Models;
 using GameHub.DAL.Data;
+using GameHub.DAL.Repositories;
+using GameHub.DAL.Repositories.Interfaces;
 using GameHub.SignalR.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +15,18 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Repositories
+builder.Services.AddScoped<IRepository, Repository>();
+
+//Services
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IGameEventService, GameEventService>();
+builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 // Add services to the container.
 
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
@@ -82,7 +96,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//services
 
 var app = builder.Build();
 

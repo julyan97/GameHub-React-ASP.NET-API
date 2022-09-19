@@ -1,4 +1,4 @@
-﻿using GameHub.Common.Models;
+﻿using GameHub.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
