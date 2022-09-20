@@ -1,4 +1,5 @@
 ﻿using GameHub.Common.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,39 @@ namespace GameHub.DAL.Data.Extensions
                .WithMany(y => y.NotificationsRecived)
                .OnDelete(DeleteBehavior.NoAction);
             });
+        }
+
+        public static void Seed(this ModelBuilder builder)
+        {
+            builder.Entity<Game>()
+                .HasData(
+                new Game { Id = Guid.NewGuid().ToString(), GameName = "lol", ImageUrl = "google.com" });
+
+            var userId = Guid.NewGuid().ToString();
+            User user = new User()
+            {
+                Id = userId,
+                UserName = "Admin",
+                NormalizedUserName = "ADMIN",
+                Email = "admin",
+                NormalizedEmail = "ADMIN",
+                LockoutEnabled = false,
+            };
+            PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
+            user.PasswordHash = passwordHasher.HashPassword(user, "admin123");
+            
+            builder.Entity<User>().HasData(user);
+
+            var adminId = Guid.NewGuid().ToString();
+            builder.Entity<IdentityRole>()
+                .HasData(
+                new IdentityRole() { Id = adminId, Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin" },
+                new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = "User", ConcurrencyStamp = "2", NormalizedName = "User" });
+
+            builder.Entity<IdentityUserRole<string>>()
+                .HasData(
+                new IdentityUserRole<string>() { RoleId = adminId, UserId = userId }
+    );
         }
     }
 }

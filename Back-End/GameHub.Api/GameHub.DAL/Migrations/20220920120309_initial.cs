@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GameHub.DAL.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -73,20 +73,6 @@ namespace GameHub.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Games", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Players",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RefUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
-                    UsernameInGame = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Players", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -196,6 +182,26 @@ namespace GameHub.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Players",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    UsernameInGame = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Players", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Players_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -234,7 +240,7 @@ namespace GameHub.DAL.Migrations
                     GameId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DiscordUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Devision = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rank = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NumberOfPlayers = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -312,6 +318,30 @@ namespace GameHub.DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "41b8176b-8a1f-4349-a5e8-bab4a61df96d", "1", "Admin", "Admin" },
+                    { "7bb61085-e4c9-4fce-936e-045e130db44b", "2", "User", "User" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "IsDeleted", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Rating", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "1f03e47f-ca04-4069-85df-0f1875f61ca5", 0, "b83da0a5-a1f2-48bb-9d53-056f9d28ec3f", "admin", false, false, false, null, "ADMIN", "ADMIN", "AQAAAAEAACcQAAAAECnvTU5GLQPD8PJUNLyia69wjKIoTiv15Si/hW9pYLBmX09FyFRD5u+bXpeSGwCG1w==", null, false, 0, "cd6e618c-f266-4a2c-ae1b-679308c4cd02", false, "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "Games",
+                columns: new[] { "Id", "GameName", "ImageUrl" },
+                values: new object[] { "bc85a0e7-3e2c-43c0-b16d-44adb8c85284", "lol", "google.com" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "41b8176b-8a1f-4349-a5e8-bab4a61df96d", "1f03e47f-ca04-4069-85df-0f1875f61ca5" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -382,6 +412,11 @@ namespace GameHub.DAL.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Players_UserId",
+                table: "Players",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Posts_CategoryId",
                 table: "Posts",
                 column: "CategoryId");
@@ -425,9 +460,6 @@ namespace GameHub.DAL.Migrations
                 name: "GameEvents");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
@@ -435,6 +467,9 @@ namespace GameHub.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Players");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

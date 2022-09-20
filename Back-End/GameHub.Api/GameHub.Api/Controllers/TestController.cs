@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using GameHub.Common.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -7,20 +9,27 @@ namespace GameHub.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class TestController : ControllerBase
     {
-        [HttpGet("Test")]
-        public IActionResult Tester()
+        private RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> userManager;
+
+        public TestController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
+            _roleManager=roleManager;
+            this.userManager=userManager;
+        }
+        [HttpGet("Test")]
+        public async Task<IActionResult> Tester()
+        {
+            var userName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var user = userManager.Users.FirstOrDefault(x => x.UserName == userName);
             return Ok(new
             {
-                Test = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
-                IsAuth = User.Identity.IsAuthenticated,
-                Key = User.Claims.ToList()[1].Type,
-                Type = User.Claims.ToList()[1].ValueType,
-                Name = User.Claims.ToList()[1].Value,
-            }); ;
+                Roles = _roleManager.Roles,
+                Roles2 = await userManager.GetRolesAsync(user)
+            });
         }
     }
 }

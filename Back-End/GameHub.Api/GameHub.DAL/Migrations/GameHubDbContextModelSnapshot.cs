@@ -37,9 +37,10 @@ namespace GameHub.DAL.Migrations
                     b.ToTable("GameEventPlayer");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Category", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Category", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Type")
@@ -51,9 +52,10 @@ namespace GameHub.DAL.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Game", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Game", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("GameName")
@@ -68,18 +70,23 @@ namespace GameHub.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "bc85a0e7-3e2c-43c0-b16d-44adb8c85284",
+                            GameName = "lol",
+                            ImageUrl = "google.com"
+                        });
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.GameEvent", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.GameEvent", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Devision")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -102,6 +109,10 @@ namespace GameHub.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Rank")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -114,9 +125,10 @@ namespace GameHub.DAL.Migrations
                     b.ToTable("GameEvents");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Notification", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Notification", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -152,16 +164,18 @@ namespace GameHub.DAL.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Player", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Player", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid>("RefUserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UsernameInGame")
                         .IsRequired()
@@ -170,12 +184,15 @@ namespace GameHub.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Post", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Post", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CategoryId")
@@ -214,7 +231,7 @@ namespace GameHub.DAL.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.User", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -283,6 +300,26 @@ namespace GameHub.DAL.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1f03e47f-ca04-4069-85df-0f1875f61ca5",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b83da0a5-a1f2-48bb-9d53-056f9d28ec3f",
+                            Email = "admin",
+                            EmailConfirmed = false,
+                            IsDeleted = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAECnvTU5GLQPD8PJUNLyia69wjKIoTiv15Si/hW9pYLBmX09FyFRD5u+bXpeSGwCG1w==",
+                            PhoneNumberConfirmed = false,
+                            Rating = 0,
+                            SecurityStamp = "cd6e618c-f266-4a2c-ae1b-679308c4cd02",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -310,6 +347,22 @@ namespace GameHub.DAL.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "41b8176b-8a1f-4349-a5e8-bab4a61df96d",
+                            ConcurrencyStamp = "1",
+                            Name = "Admin",
+                            NormalizedName = "Admin"
+                        },
+                        new
+                        {
+                            Id = "7bb61085-e4c9-4fce-936e-045e130db44b",
+                            ConcurrencyStamp = "2",
+                            Name = "User",
+                            NormalizedName = "User"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -399,6 +452,13 @@ namespace GameHub.DAL.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1f03e47f-ca04-4069-85df-0f1875f61ca5",
+                            RoleId = "41b8176b-8a1f-4349-a5e8-bab4a61df96d"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -424,28 +484,28 @@ namespace GameHub.DAL.Migrations
 
             modelBuilder.Entity("GameEventPlayer", b =>
                 {
-                    b.HasOne("GameHub.Common.Models.GameEvent", null)
+                    b.HasOne("GameHub.Common.Entities.GameEvent", null)
                         .WithMany()
                         .HasForeignKey("GameEventsParticipatesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GameHub.Common.Models.Player", null)
+                    b.HasOne("GameHub.Common.Entities.Player", null)
                         .WithMany()
                         .HasForeignKey("PlayersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.GameEvent", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.GameEvent", b =>
                 {
-                    b.HasOne("GameHub.Common.Models.Game", "Game")
+                    b.HasOne("GameHub.Common.Entities.Game", "Game")
                         .WithMany()
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GameHub.Common.Models.Player", "Owner")
+                    b.HasOne("GameHub.Common.Entities.Player", "Owner")
                         .WithMany("GameEventsOwn")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -456,21 +516,21 @@ namespace GameHub.DAL.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Notification", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Notification", b =>
                 {
-                    b.HasOne("GameHub.Common.Models.GameEvent", "GameEvent")
+                    b.HasOne("GameHub.Common.Entities.GameEvent", "GameEvent")
                         .WithMany()
                         .HasForeignKey("GameEventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GameHub.Common.Models.User", "Recipient")
+                    b.HasOne("GameHub.Common.Entities.User", "Recipient")
                         .WithMany("NotificationsRecived")
                         .HasForeignKey("RecipientId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GameHub.Common.Models.User", "Sender")
+                    b.HasOne("GameHub.Common.Entities.User", "Sender")
                         .WithMany("NotificationsSend")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -483,15 +543,26 @@ namespace GameHub.DAL.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Post", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Player", b =>
                 {
-                    b.HasOne("GameHub.Common.Models.Category", "Category")
+                    b.HasOne("GameHub.Common.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GameHub.Common.Entities.Post", b =>
+                {
+                    b.HasOne("GameHub.Common.Entities.Category", "Category")
                         .WithMany("Posts")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GameHub.Common.Models.User", "Creator")
+                    b.HasOne("GameHub.Common.Entities.User", "Creator")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -513,7 +584,7 @@ namespace GameHub.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("GameHub.Common.Models.User", null)
+                    b.HasOne("GameHub.Common.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -522,7 +593,7 @@ namespace GameHub.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("GameHub.Common.Models.User", null)
+                    b.HasOne("GameHub.Common.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -537,7 +608,7 @@ namespace GameHub.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GameHub.Common.Models.User", null)
+                    b.HasOne("GameHub.Common.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -546,24 +617,24 @@ namespace GameHub.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("GameHub.Common.Models.User", null)
+                    b.HasOne("GameHub.Common.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Category", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Category", b =>
                 {
                     b.Navigation("Posts");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.Player", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.Player", b =>
                 {
                     b.Navigation("GameEventsOwn");
                 });
 
-            modelBuilder.Entity("GameHub.Common.Models.User", b =>
+            modelBuilder.Entity("GameHub.Common.Entities.User", b =>
                 {
                     b.Navigation("NotificationsRecived");
 

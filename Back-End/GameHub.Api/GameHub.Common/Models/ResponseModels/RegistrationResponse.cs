@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameHub.BL.Services.IServices
+namespace GameHub.Common.Models.ResponseModels
 {
-    public interface IBaseService
+    public class RegistrationResponse : AutResult
     {
-        Task SaveChangesAsync();
+
     }
 }

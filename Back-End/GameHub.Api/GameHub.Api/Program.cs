@@ -1,15 +1,17 @@
 using GameHub.Api.Middlewares;
-using GameHub.BL.Services;
-using GameHub.BL.Services.IServices;
 using GameHub.Common.Entities;
 using GameHub.Common.GloballyNeededModels;
 using GameHub.DAL.Data;
 using GameHub.DAL.Repositories;
 using GameHub.DAL.Repositories.Interfaces;
+using GameHub.Logic.Services.Event;
+using GameHub.Logic.Services.Game;
+using GameHub.Logic.Services.User;
 using GameHub.SignalR.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -19,17 +21,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IRepository, Repository>();
 
 //Services
-builder.Services.AddScoped<IHomeService, HomeService>();
-builder.Services.AddScoped<IGameEventService, GameEventService>();
-builder.Services.AddScoped<IPlayerService, PlayerService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IGameService, GameService>();
-builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 // Add services to the container.
 
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 //SignalR
 builder.Services.AddSignalR();
@@ -88,6 +88,7 @@ builder.Services.AddDefaultIdentity<User>(op =>
 {
     op.SignIn.RequireConfirmedAccount = true;
 })
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<GameHubDbContext>();
 
 

@@ -36,6 +36,7 @@ namespace GameHub.DAL.Data
             builder.BuildCategory();
             builder.BuildUser();
             builder.BuildNotification();
+            builder.Seed(); 
             base.OnModelCreating(builder);
         }
 

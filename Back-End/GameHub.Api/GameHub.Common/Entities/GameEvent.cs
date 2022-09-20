@@ -18,7 +18,7 @@ namespace GameHub.Common.Entities
 
         public string Description { get; set; }
 
-        public string Devision { get; set; }
+        public string Rank { get; set; }
 
         [Required]
         public int NumberOfPlayers { get; set; }

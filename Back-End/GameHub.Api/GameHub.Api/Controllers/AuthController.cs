@@ -1,14 +1,15 @@
-﻿using GameHub.BL.Helpers;
-using GameHub.Common.AuthModels.RequestModels;
+﻿using GameHub.Common.AuthModels.RequestModels;
 using GameHub.Common.AuthModels.ResponseModels;
 using GameHub.Common.Entities;
 using GameHub.Common.GloballyNeededModels;
+using GameHub.Logic.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -47,11 +48,15 @@ public class AuthController : ControllerBase
                 });
             }
 
-            var newUser = new User() { Email = user.Email, UserName = user.Email };
+            var newUser = new User() { Email = user.Email, UserName = user.Email, };
             var isCreated = await _userManager.CreateAsync(newUser, user.Password);
-            if (isCreated.Succeeded)
+            var isRoleCreated = await _userManager.AddToRoleAsync(newUser, "User");
+
+            var roles = (await _userManager.GetRolesAsync(newUser));
+
+            if (isCreated.Succeeded && isRoleCreated.Succeeded)
             {
-                var jwtToken = JwtHelper.GenerateJwtToken(newUser, _jwtConfig);
+                var jwtToken = JwtHelper.GenerateJwtToken(newUser, _jwtConfig, String.Join(", ",roles));
 
                 return Ok(new RegistrationResponse()
                 {
@@ -101,11 +106,13 @@ public class AuthController : ControllerBase
             }
 
             var isCorrect = await _userManager.CheckPasswordAsync(existingUser, user.Password);
+            
+            var roles = await _userManager.GetRolesAsync(existingUser);
 
             if (isCorrect)
             {
 
-                string jwtToken = JwtHelper.GenerateJwtToken(existingUser, _jwtConfig);
+                string jwtToken = JwtHelper.GenerateJwtToken(existingUser, _jwtConfig,String.Join(", ",roles));
                 Response.Cookies.Append("jwt", jwtToken);
                 return Ok(new RegistrationResponse()
                 {

@@ -6,11 +6,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace GameHub.BL.Helpers
+namespace GameHub.Logic.Helpers
 {
     public static class JwtHelper
     {
-        public static string GenerateJwtToken(User user, JwtConfig _jwtConfig)
+
+        public static string GenerateJwtToken(User user, JwtConfig _jwtConfig, string role = null)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
@@ -28,6 +29,11 @@ namespace GameHub.BL.Helpers
                 Expires = DateTime.UtcNow.AddHours(6),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
             };
+
+            if (!string.IsNullOrEmpty(role))
+            {
+                tokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = jwtTokenHandler.CreateToken(tokenDescriptor);
 
