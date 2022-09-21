@@ -8,8 +8,8 @@ namespace GameHub.Common.Mapper
     {
         public Mapper()
         {
-            CreateMap<GameEvent, RequestEvent>();
-            CreateMap<RequestEvent, GameEvent>();
+            CreateMap<GameEvent, RequestCreateEvent>();
+            CreateMap<RequestCreateEvent, GameEvent>();
         }
     }
 }

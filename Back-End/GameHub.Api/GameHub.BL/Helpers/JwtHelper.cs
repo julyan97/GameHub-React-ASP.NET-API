@@ -22,6 +22,7 @@ namespace GameHub.Logic.Helpers
                 Subject = new ClaimsIdentity(new[]
                 {
                 new Claim("Id", user.Id),
+                new Claim(ClaimTypes.Name, user.Email),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

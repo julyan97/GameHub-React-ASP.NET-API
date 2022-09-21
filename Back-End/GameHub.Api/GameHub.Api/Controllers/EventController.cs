@@ -24,24 +24,40 @@ namespace GameHub.Api.Controllers
         }
 
         [HttpPost("Events")]
-        public async Task<IActionResult> Events(RequestEvent request)
+        public async Task<IActionResult> Events()
         {
             return Ok(eventService.GetAll().ToList());
         }
 
         [HttpPost("CreateEvent")]
-        public async Task<IActionResult> CreateEvent(RequestEvent request)
+        public async Task<IActionResult> CreateEvent([FromBody]RequestCreateEvent request)
         {
             var userName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             var res = await eventService.GenerateEventAsync(request, userName);
             return Ok(res);
         }
 
-        [HttpPost("Delete/{id}")]
+        [HttpGet("Delete/{id}")]
         public async Task<IActionResult> DeleteEvent(string id)
         {
             await eventService.DeleteAsync(id);
             return Ok();
+        }
+
+        [HttpPost("AddPlayerToEvent")]
+        public async Task<IActionResult> AddPlayerToEvent(string eventId, string playerName)
+        {
+            var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+            try
+            {
+                await eventService.AddPlayerToEventAsync(eventId, playerName, userId);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+
+            return Ok("Successfuly added player");
         }
     }
 }

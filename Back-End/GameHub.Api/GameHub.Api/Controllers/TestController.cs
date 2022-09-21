@@ -28,7 +28,9 @@ namespace GameHub.Api.Controllers
             return Ok(new
             {
                 Roles = _roleManager.Roles,
-                Roles2 = await userManager.GetRolesAsync(user)
+                Roles2 = await userManager.GetRolesAsync(user),
+                UserId = User.Claims.FirstOrDefault(x=>x.Type == "Id").Value,
+                UserName = User.Identity.Name
             });
         }
     }

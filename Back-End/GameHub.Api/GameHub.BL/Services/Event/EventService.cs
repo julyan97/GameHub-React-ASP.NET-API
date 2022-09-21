@@ -4,6 +4,7 @@ using GameHub.Common.Models.RequestModels;
 using GameHub.DAL.Repositories.Interfaces;
 using GameHub.Logic.Services.Game;
 using GameHub.Logic.Services.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameHub.Logic.Services.Event
 {
@@ -26,7 +27,7 @@ namespace GameHub.Logic.Services.Event
             mapper=map;
         }
 
-        public async Task<GameEvent> GenerateEventAsync(RequestEvent gameEvent, string userName)
+        public async Task<GameEvent> GenerateEventAsync(RequestCreateEvent gameEvent, string userName)
         {
             var gameEve = mapper.Map<GameEvent>(gameEvent);
             var game = gameService.GetByName(gameEvent.GameName);
@@ -40,7 +41,9 @@ namespace GameHub.Logic.Services.Event
 
             gameEve.OwnerId = player.Id;
 
-            player.GameEventsOwn.Add(gameEve);
+            //player.GameEventsOwn.Add(gameEve);
+
+            gameEve.Players.Add(player);
             var res = await repository.CreateAsync(gameEve);
 
             await repository.SaveChangesAsync();
@@ -53,11 +56,56 @@ namespace GameHub.Logic.Services.Event
             return repository.AllReadOnly<GameEvent>();
         }
 
+        public async Task<GameEvent?> GetById(string id)
+        {
+            return await repository.All<GameEvent>()
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public Common.Entities.Player? ContainPlayer(string eventId, string playerName)
+        {
+            var res = repository.All<GameEvent>()
+                .Include(x => x.Players)
+                .FirstOrDefault(x => x.Id == eventId)?
+                .Players
+                .FirstOrDefault(x => x.UsernameInGame == playerName); ;
+
+            return res;
+        }
+
+        public async Task<GameEvent> AddPlayerToEventAsync(string eventId, string playerName, string playerUserId)
+        {
+            var gameEvent = await GetById(eventId);
+            var player = ContainPlayer(eventId, playerName);
+
+            if (gameEvent == null || player != null)
+                throw new Exception("event may not exist, or the player has already joined the event");
+
+            var newPlayer = new Common.Entities.Player
+            {
+                User = userService.GetById(playerUserId),
+                UsernameInGame = playerName
+            };
+
+            gameEvent.Players.Add(newPlayer);
+            await repository.SaveChangesAsync();
+
+            return gameEvent;
+
+        }
+
         public async Task DeleteAsync(string id)
         {
             var entity = repository.All<GameEvent>(x => x.Id == id).FirstOrDefault();
             await repository.DeleteAsync<GameEvent>(entity);
             await repository.SaveChangesAsync();
+        }
+
+        public async Task DeleteAllExpiredGameEventsAsync()
+        {
+            var expiredEvents = repository.AllReadOnly<GameEvent>()
+                .Where(g => g.DueDate <= DateTime.Now);
+            await repository.DeleteRangeAsync(expiredEvents);
         }
 
     }

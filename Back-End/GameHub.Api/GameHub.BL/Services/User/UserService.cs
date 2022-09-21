@@ -23,5 +23,11 @@ namespace GameHub.Logic.Services.User
                 .FirstOrDefault();
         }
 
+        public Common.Entities.User GetById(string id)
+        {
+            return repository
+                .All<Common.Entities.User>(x => x.Id == id)
+                .FirstOrDefault();
+        }
     }
 }

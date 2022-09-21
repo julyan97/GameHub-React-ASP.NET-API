@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GameHub.Common.Models.RequestModels
 {
-    public class RequestEvent
+    public class RequestCreateEvent
     {
         public string OwnerInGameName { get; set; }
         public string Description { get; set; }
