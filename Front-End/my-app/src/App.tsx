@@ -15,6 +15,7 @@ import { OutGoingNotificationMethods } from './Services/SignalRHelpers/OutGoingN
 import { IContextModel } from './Models/Models';
 import { CreateEvent } from './Components/CreateEvent/CreateEvent';
 import { AuthService } from './Services/AuthService';
+import { EventsPage } from './Components/EventsPage/EventsPage';
 
 export const AuthContext = React.createContext<IContextModel>({
   setUserName: null,
@@ -76,6 +77,7 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
             <Route path='/createEvent' element={<CreateEvent />} />
+            <Route path='/home' element={<EventsPage />} />
           </Routes>
         </BrowserRouter>
       </div>
