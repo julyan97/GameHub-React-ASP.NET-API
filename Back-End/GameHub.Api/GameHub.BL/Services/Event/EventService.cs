@@ -29,9 +29,9 @@ namespace GameHub.Logic.Services.Event
 
         public async Task<GameEvent> GenerateEventAsync(RequestCreateEvent gameEvent, string userName)
         {
-            var gameEve = mapper.Map<GameEvent>(gameEvent);
+            var gameEventMap = mapper.Map<GameEvent>(gameEvent);
             var game = gameService.GetByName(gameEvent.GameName);
-            gameEve.Game = game;
+            gameEventMap.Game = game;
 
             var player = await repository.CreateAsync(new Common.Entities.Player()
             {
@@ -39,12 +39,10 @@ namespace GameHub.Logic.Services.Event
                 UsernameInGame = gameEvent.OwnerInGameName
             });
 
-            gameEve.OwnerId = player.Id;
+            gameEventMap.OwnerId = player.Id;
 
-            //player.GameEventsOwn.Add(gameEve);
-
-            gameEve.Players.Add(player);
-            var res = await repository.CreateAsync(gameEve);
+            gameEventMap.Players.Add(player);
+            var res = await repository.CreateAsync(gameEventMap);
 
             await repository.SaveChangesAsync();
             return res;
