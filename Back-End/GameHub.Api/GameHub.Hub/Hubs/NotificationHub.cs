@@ -4,9 +4,15 @@ using System.Security.Claims;
 
 namespace GameHub.SignalR.Hubs
 {
+    public class UserConnectionIndentity
+    {
+        public string? UserConnection { get; set; }
+        public string? UserIndentifier { get; set; }
+    }
+
     public class NotificationHub : Hub<INotification>
     {
-        public static Dictionary<string, string> UserConnectionIds = new();
+        public static Dictionary<string?, UserConnectionIndentity> UserConnectionIdentities = new();
 
         public async Task SendNotificationToAll()
         {
@@ -14,7 +20,7 @@ namespace GameHub.SignalR.Hubs
         }
         public async Task AddToGroup(string groupName, string userName)
         {
-            var userConnectionId = UserConnectionIds[userName];
+            var userConnectionId = UserConnectionIdentities[userName].UserConnection;
             await Groups.AddToGroupAsync(userConnectionId, groupName);
         }
 
@@ -26,11 +32,16 @@ namespace GameHub.SignalR.Hubs
         public override Task OnConnectedAsync()
         {
             var userName = Context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var userConnectioniId = Context.ConnectionId;
+            var userConnectionId = Context.ConnectionId;
+            var userIdentifier = Context.UserIdentifier;
 
             if (userName != null)
             {
-                UserConnectionIds.Add(userName, userConnectioniId);
+                UserConnectionIdentities.Add(userName, new() 
+                {
+                    UserConnection = userConnectionId,
+                    UserIndentifier = userIdentifier
+                });
             }
 
             return base.OnConnectedAsync();

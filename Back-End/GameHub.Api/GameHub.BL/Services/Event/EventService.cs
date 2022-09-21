@@ -71,7 +71,7 @@ namespace GameHub.Logic.Services.Event
             return res;
         }
 
-        public async Task<GameEvent> AddPlayerToEventAsync(string eventId, string playerName, string playerUserId)
+        public async Task<(GameEvent gameEvent, Common.Entities.Player player)> AddPlayerToEventAsync(string eventId, string playerName, string playerUserId)
         {
             var gameEvent = await GetById(eventId);
             var player = ContainPlayer(eventId, playerName);
@@ -88,7 +88,7 @@ namespace GameHub.Logic.Services.Event
             gameEvent.Players.Add(newPlayer);
             await repository.SaveChangesAsync();
 
-            return gameEvent;
+            return (gameEvent, newPlayer);
 
         }
 

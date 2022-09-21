@@ -12,7 +12,7 @@ namespace GameHub.Logic.Services.Game
             this.repository=repository;
         }
 
-        public Common.Entities.Game GetByName(string name)
+        public Common.Entities.Game? GetByName(string name)
         {
             return repository
                 .All<Common.Entities.Game>(x => x.GameName == name)

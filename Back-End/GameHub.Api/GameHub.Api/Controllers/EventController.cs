@@ -2,8 +2,11 @@
 using GameHub.Common.Entities;
 using GameHub.Common.Models.RequestModels;
 using GameHub.Logic.Services.Event;
+using GameHub.Logic.Services.Notification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Numerics;
 using System.Security.Claims;
 
 namespace GameHub.Api.Controllers
@@ -14,13 +17,16 @@ namespace GameHub.Api.Controllers
     {
         public readonly IMapper _mapper;
         private readonly IEventService eventService;
+        private readonly INotificationService notificationService;
 
         public EventController(
             IMapper mapper,
-            IEventService eventService)
+            IEventService eventService,
+            INotificationService notificationService)
         {
             _mapper = mapper;
             this.eventService=eventService;
+            this.notificationService=notificationService;
         }
 
         [HttpPost("Events")]
@@ -50,7 +56,27 @@ namespace GameHub.Api.Controllers
             var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
             try
             {
-                await eventService.AddPlayerToEventAsync(eventId, playerName, userId);
+                var tuple = await eventService.AddPlayerToEventAsync(eventId, playerName, userId);
+                var notification = new Notification()
+                {
+
+                    Message = "Player " + playerName + " wants to join your event.",
+                    SenderId = tuple.player.User.Id,
+                    RecipientId = tuple.gameEvent.Owner.User.Id,
+                    GameEvent = tuple.gameEvent,
+                    IsRead = false
+
+                };
+                tuple.gameEvent.Owner.User.NotificationsRecived.Add(notification);
+                await notificationService.SaveAsync();
+
+                var notifications = notificationService.GetUserNotifications(tuple.gameEvent.Owner.User.Id);
+
+                await notificationService.Send(tuple.gameEvent.Owner.User.UserName, new
+                {
+                    Notifications = notifications.OrderByDescending(x => x.CreatedAt).ToArray(),
+                    NotCount = tuple.gameEvent.Owner.User.NotificationsRecived.Count(n => n.IsRead == false)
+                });
             }
             catch(Exception e)
             {
