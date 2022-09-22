@@ -32,7 +32,7 @@ export class SignalRService {
         }, [])
     }
 
-    static tryConnect = async (connection: any) => {
+    static tryConnect = async (connection: HubConnection) => {
         try {
             if (connection != null && this.isConnected === false) {
                 const res = await connection.start();
@@ -42,8 +42,9 @@ export class SignalRService {
         }
         catch (e) {
             console.log("Connection failed: " + e)
+            this.isConnected = false
         }
-
+        if(this.isConnected)
             for (let index = 0; index < this.IncomingConnection.length; index++) {
                 const element = this.IncomingConnection[index];
                 connection.on(element.name, element.method);

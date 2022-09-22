@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { start } from 'repl';
 import { EventService } from '../../../Services/EventService';
 import { GameService } from '../../../Services/GameService';
+import { OutGoingNotificationMethods } from '../../../Services/SignalRHelpers/OutGoingNotificationMethods';
 
 export interface ICreateEventProps {
 }
@@ -48,6 +49,7 @@ export function CreateEvent(props: ICreateEventProps) {
         }
         try {
             await EventService.CreateEvent(requestObj)
+            await OutGoingNotificationMethods.UpdateAllGameEventsPages();
             navigate("/home");
         }
         catch (e) {
@@ -76,7 +78,7 @@ export function CreateEvent(props: ICreateEventProps) {
                             className="custom-select d-in"
                         >
                             <option value="">Chose your game</option>
-                            {Games.map(x => <option value={x}>{x}</option>)}
+                            {Games.map(x => <option key={x} value={x}>{x}</option>)}
 
                         </select>
                         <div className="invalid-feedback">

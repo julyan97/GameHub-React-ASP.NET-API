@@ -10,7 +10,7 @@ export interface IEventsPageProps {
 
 export function EventsPage(props: IEventsPageProps) {
     const [GameEvents, setGameEvents] = useState<Array<any>>([])
-    const [ReRender, setReRender] = useState(false)
+    const [ReRender, setReRender] = useState(0)
     useEffect(() => {
         EventService.GetAll()
             .then(res => {
@@ -20,7 +20,7 @@ export function EventsPage(props: IEventsPageProps) {
     }, [ReRender])
 
     const RenderPage =  ()=>{
-        setReRender(!ReRender)
+        setReRender(Math.random())
     }
 
     //SignalR Begin
@@ -33,7 +33,7 @@ export function EventsPage(props: IEventsPageProps) {
     return (
         <>
             <h6 className='text-white'>
-                {ReRender ? "Yes" : "No"}
+                {ReRender }
             </h6>
             <div >
                 {GameEvents.map((x, i) => <GameEvent
