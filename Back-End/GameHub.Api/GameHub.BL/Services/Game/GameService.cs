@@ -1,5 +1,6 @@
 ﻿using GameHub.DAL.Repositories.Interfaces;
 using GameHub.Common.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameHub.Logic.Services.Game
 {
@@ -17,6 +18,13 @@ namespace GameHub.Logic.Services.Game
             return repository
                 .All<Common.Entities.Game>(x => x.GameName == name)
                 .FirstOrDefault();
+        }
+
+        public IEnumerable<Common.Entities.Game> GetAll()
+        {
+            return repository
+                .AllReadOnly<Common.Entities.Game>()
+                .ToList();
         }
 
     }

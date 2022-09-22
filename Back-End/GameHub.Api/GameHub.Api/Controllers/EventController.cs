@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using GameHub.Common.Entities;
-using GameHub.Common.Models.RequestModels;
+using GameHub.Common.Models.RequestModels.GameEvent;
 using GameHub.Logic.Services.Event;
 using GameHub.Logic.Services.Notification;
+using GameHub.SignalR.Hubs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -29,18 +30,34 @@ namespace GameHub.Api.Controllers
             this.notificationService=notificationService;
         }
 
-        [HttpPost("Events")]
+        [HttpGet("Events")]
         public async Task<IActionResult> Events()
         {
-            return Ok(eventService.GetAll().ToList());
+            var events = eventService.GetAll().ToList();
+            return Ok(events);
+        }
+
+        [HttpGet("GetById")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            var GameEvent = await eventService.GetByIdAsync(id);
+            return Ok(GameEvent);
         }
 
         [HttpPost("CreateEvent")]
         public async Task<IActionResult> CreateEvent([FromBody]RequestCreateEvent request)
         {
-            var userName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            var res = await eventService.GenerateEventAsync(request, userName);
-            return Ok(res);
+            try
+            {
+                var userName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                var res = await eventService.GenerateEventAsync(request, userName);
+                return Ok(res);
+            }
+            catch(Exception e)
+            {
+                return BadRequest("Cant Sry:"+ e);
+            }
         }
 
         [HttpGet("Delete/{id}")]
@@ -51,34 +68,51 @@ namespace GameHub.Api.Controllers
         }
 
         [HttpPost("AddPlayerToEvent")]
-        public async Task<IActionResult> AddPlayerToEvent(string eventId, string playerName)
+        public async Task<IActionResult> AddPlayerToEvent(RequestAddPlayerToEvent request)
         {
             var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
             try
             {
-                var tuple = await eventService.AddPlayerToEventAsync(eventId, playerName, userId);
-                var notification = new Notification()
-                {
+                var tuple = await eventService.AddPlayerToEventAsync(request.EventId, request.PlayerName, userId);
 
-                    Message = "Player " + playerName + " wants to join your event.",
-                    SenderId = tuple.player.User.Id,
-                    RecipientId = tuple.gameEvent.Owner.User.Id,
-                    GameEvent = tuple.gameEvent,
-                    IsRead = false
+                //var notification = new Notification()
+                //{
 
-                };
-                tuple.gameEvent.Owner.User.NotificationsRecived.Add(notification);
-                await notificationService.SaveAsync();
+                //    Message = "Player " + request.PlayerName + " wants to join your event.",
+                //    SenderId = tuple.player.User.Id,
+                //    RecipientId = tuple.gameEvent.Owner.User.Id,
+                //    GameEvent = tuple.gameEvent,
+                //    IsRead = false
 
-                var notifications = notificationService.GetUserNotifications(tuple.gameEvent.Owner.User.Id);
+                //};
+                //tuple.gameEvent.Owner.User.NotificationsRecived.Add(notification);
+                //await notificationService.SaveAsync();
 
-                await notificationService.Send(tuple.gameEvent.Owner.User.UserName, new
-                {
-                    Notifications = notifications.OrderByDescending(x => x.CreatedAt).ToArray(),
-                    NotCount = tuple.gameEvent.Owner.User.NotificationsRecived.Count(n => n.IsRead == false)
-                });
+                //var notifications = notificationService.GetUserNotifications(tuple.gameEvent.Owner.User.Id);
+
+                //await notificationService.Send(tuple.gameEvent.Owner.User.UserName, new
+                //{
+                //    Notifications = notifications.OrderByDescending(x => x.CreatedAt).ToArray(),
+                //    NotCount = tuple.gameEvent.Owner.User.NotificationsRecived.Count(n => n.IsRead == false)
+                //});
             }
             catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+
+            return Ok("Successfuly added player");
+        }
+
+        [HttpPost("RemovePlayerToEvent")]
+        public async Task<IActionResult> RemovePlayerToEvent(RequestAddPlayerToEvent request)
+        {
+            var userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+            try
+            {
+               await eventService.RemovePlayerFromEventByNameAsync(request);
+            }
+            catch (Exception e)
             {
                 return BadRequest(e);
             }

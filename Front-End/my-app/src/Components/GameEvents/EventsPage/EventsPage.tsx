@@ -1,0 +1,55 @@
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import Popup from 'reactjs-popup';
+import { EventService } from '../../../Services/EventService';
+import { SignalRService } from '../../../Services/SignalRHelpers/SignalRService';
+import { GameEvent } from '../GameEvent/GameEvent';
+
+export interface IEventsPageProps {
+}
+
+export function EventsPage(props: IEventsPageProps) {
+    const [GameEvents, setGameEvents] = useState<Array<any>>([])
+    const [ReRender, setReRender] = useState(false)
+    useEffect(() => {
+        EventService.GetAll()
+            .then(res => {
+                console.log(res);
+                setGameEvents(res);
+            });
+    }, [ReRender])
+
+    const RenderPage =  ()=>{
+        setReRender(!ReRender)
+    }
+
+    //SignalR Begin
+
+    SignalRService.RegisterIncomingMethods([
+        { name: "ReRenderGameEventsPage", method: () => RenderPage() }
+    ], false);
+
+    //SignalR End
+    return (
+        <>
+            <h6 className='text-white'>
+                {ReRender ? "Yes" : "No"}
+            </h6>
+            <div >
+                {GameEvents.map((x, i) => <GameEvent
+                    key={x.id}
+                    id={x.id}
+                    description={x.description}
+                    discordUrl={x.discordUrl}
+                    endDate={x.dueDate}
+                    game={x.game}
+                    playerCount={x.numberOfPlayers}
+                    owner={x.owner}
+                    players={x.players}
+                    rank={x.rank}
+                    startingDate={x.startDate}
+                />)}
+            </div>
+        </>
+    );
+}

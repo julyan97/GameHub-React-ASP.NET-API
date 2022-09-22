@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GameHub.Common.Entities;
-using GameHub.Common.Models.RequestModels;
+using GameHub.Common.Models.RequestModels.GameEvent;
 
 namespace GameHub.Common.Mapper
 {

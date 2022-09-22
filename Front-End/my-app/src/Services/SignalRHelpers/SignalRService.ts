@@ -1,4 +1,4 @@
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { useEffect } from 'react';
 import { OutGoingNotificationMethods } from './OutGoingNotificationMethods';
 
@@ -17,7 +17,7 @@ export class SignalRService {
     static host = 'https://localhost:7285/hubs/notification';
     static IncomingConnection: Array<IIncomingConnection> = [];
     static Connection: SignalRConnection = { connection: null, setConnection: null };
-
+    private static isConnected = false;
 
 
     //meant to be used in a useEffect hook
@@ -32,22 +32,32 @@ export class SignalRService {
         }, [])
     }
 
-    //Connection element should be of type {name,method}
-    static CreateEndPointMethods = (connection: any) => {
-
-        useEffect(() => {
-            if (connection) {
-                connection.start().then((res: any) => {
-                    console.log("Connected")
-
-                    for (let index = 0; index < this.IncomingConnection.length; index++) {
-                        const element = this.IncomingConnection[index];
-                        connection.on(element.name, element.method);
-                    }
-                })
-                    .catch((e: any) => console.log("Connection failed: " + e));
+    static tryConnect = async (connection: any) => {
+        try {
+            if (connection != null && this.isConnected === false) {
+                const res = await connection.start();
+                    this.isConnected = true;
+                    console.log("Connected");
             }
+        }
+        catch (e) {
+            console.log("Connection failed: " + e)
+        }
+
+            for (let index = 0; index < this.IncomingConnection.length; index++) {
+                const element = this.IncomingConnection[index];
+                connection.on(element.name, element.method);
+            }
+    }
+    //Connection element should be of type {name,method}
+    static CreateEndPointMethods = async (connection: any) => {
+
+        
+        useEffect(() => {
+            this.tryConnect(connection)
+
         }, [connection])
+
 
     }
 

@@ -10,5 +10,7 @@ namespace GameHub.SignalR.Hubs.Clients
     {
         Task ReceiveMessage(string message);
         Task NotificationsUpdate();
+        Task ReRenderDetails();
+        Task ReRenderGameEventsPage();
     }
 }

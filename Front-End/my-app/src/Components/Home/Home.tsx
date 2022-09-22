@@ -13,7 +13,11 @@ export function Home(props: IHomeProps) {
 
     React.useEffect(() => {
         AuthService.isAuthenticated()
-        .then(data => auth.setIsAuthentication(data.authenticated));
+        .then(data => {
+            auth.setIsAuthentication(data.authenticated);
+            auth.setId(data.id);
+            auth.setUserName(data.userName)
+        });
     }, [authenticated])
     
     return (

@@ -155,8 +155,8 @@ public class AuthController : ControllerBase
         });
     }
 
-    [HttpGet("IsAuth")]
-    public IActionResult IsAuthenticated()
+    [HttpGet("Authenticate")]
+    public IActionResult Authenticate()
     {
         string email = string.Empty;
         if (User.Claims != null && User.Claims.Count() > 0)
@@ -164,10 +164,11 @@ public class AuthController : ControllerBase
             var claims = User.Claims.ToList();
             email = claims[1].Value ?? string.Empty;
         }
-        
+
 
         return Ok(new
         {
+            Id = User.Claims?.FirstOrDefault(x => x.Type == "Id")?.Value,
             Authenticated = User.Identity.IsAuthenticated,
             UserName = email,
         });

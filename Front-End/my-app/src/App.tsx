@@ -13,11 +13,15 @@ import { Register } from './Components/Register/Register';
 import { IIncomingConnection, SignalRService } from './Services/SignalRHelpers/SignalRService';
 import { OutGoingNotificationMethods } from './Services/SignalRHelpers/OutGoingNotificationMethods';
 import { IContextModel } from './Models/Models';
-import { CreateEvent } from './Components/CreateEvent/CreateEvent';
+import { CreateEvent } from './Components/GameEvents/CreateEvent/CreateEvent';
 import { AuthService } from './Services/AuthService';
-import { EventsPage } from './Components/EventsPage/EventsPage';
+import { EventsPage } from './Components/GameEvents/EventsPage/EventsPage';
+import { EventDetailsPage } from './Components/GameEvents/EventDetailsPage/EventDetailsPage';
 
 export const AuthContext = React.createContext<IContextModel>({
+  setId:null,
+  id:"",
+
   setUserName: null,
   username: "",
 
@@ -29,7 +33,7 @@ export const AuthContext = React.createContext<IContextModel>({
 
 function App() {
   const [Connection, setConnection] = useState(null);
-  const [Message, setMessage] = useState("July");
+  const [Id, setId] = useState("")
   const [Name, setName] = useState("")
   const [Authentication, setAuthentication] = useState(false)
   
@@ -40,12 +44,13 @@ function App() {
         .then(data => {
             setAuthentication(data.authenticated)
             setName(data.userName);
+            setId(data.id);
 
             // console.log(data.userName);
             // console.log(data.authenticated);
             // console.log(auth.isAuthenticated);
         })
-})
+},[])
 
   //SignalR SetUp Begin
   const ReceiveMessage = (message: string) => {
@@ -62,6 +67,8 @@ function App() {
 
   return (
     <AuthContext.Provider value={{
+      setId: setId,
+      id: Id,
       setUserName: setName,
       username: Name,
       setIsAuthentication: setAuthentication,
@@ -78,6 +85,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/createEvent' element={<CreateEvent />} />
             <Route path='/home' element={<EventsPage />} />
+            <Route path='/eventDetails' element={<EventDetailsPage />} />
           </Routes>
         </BrowserRouter>
       </div>

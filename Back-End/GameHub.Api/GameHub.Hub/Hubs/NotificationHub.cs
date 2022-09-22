@@ -18,33 +18,55 @@ namespace GameHub.SignalR.Hubs
         {
             await Clients.All.NotificationsUpdate();
         }
-        public async Task AddToGroup(string groupName, string userName)
+        public async Task AddToGroup(string groupId, string userName)
         {
-            var userConnectionId = UserConnectionIdentities[userName].UserConnection;
-            await Groups.AddToGroupAsync(userConnectionId, groupName);
+            var userConnectionId = UserConnectionIdentities[userName].UserIndentifier;
+            await Groups.AddToGroupAsync(userConnectionId, groupId);
         }
 
-        public async Task SendNotificationToGroup(string groupName)
+        public async Task SendNotificationToGroup(string groupId)
         {
-            await Clients.Group(groupName).NotificationsUpdate();
+            await Clients.Group(groupId).NotificationsUpdate();
         }
 
-        public override Task OnConnectedAsync()
+        public async Task SendNotificationToUser(string userName)
+        {
+            var userId = UserConnectionIdentities[userName].UserIndentifier;
+            await Clients.User(userId).NotificationsUpdate();
+        }
+
+        public async Task UpdateAllNotificationDetails()
+        {
+            await Clients.All.ReRenderDetails();
+        }
+
+        public async Task UpdateAllGameEventsPages()
+        {
+            await Clients.All.ReRenderGameEventsPage();
+        }
+        public override async Task OnConnectedAsync()
         {
             var userName = Context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             var userConnectionId = Context.ConnectionId;
             var userIdentifier = Context.UserIdentifier;
 
+
             if (userName != null)
             {
-                UserConnectionIdentities.Add(userName, new() 
+                UserConnectionIdentities[userName] = new() 
                 {
                     UserConnection = userConnectionId,
                     UserIndentifier = userIdentifier
-                });
+                };
             }
 
-            return base.OnConnectedAsync();
+             await base.OnConnectedAsync();
         }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            return base.OnDisconnectedAsync(exception);
+        }
+
     }
 }

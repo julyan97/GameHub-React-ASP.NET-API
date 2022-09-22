@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using GameHub.Common.Entities;
-using GameHub.Common.Models.RequestModels;
+using GameHub.Common.Models.RequestModels.GameEvent;
 using GameHub.DAL.Repositories.Interfaces;
 using GameHub.Logic.Services.Game;
 using GameHub.Logic.Services.User;
+using GameHub.SignalR.Hubs;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameHub.Logic.Services.Event
@@ -51,12 +52,17 @@ namespace GameHub.Logic.Services.Event
 
         public IEnumerable<GameEvent> GetAll()
         {
-            return repository.AllReadOnly<GameEvent>();
+            return repository.All<GameEvent>()
+                .Include(x => x.Players)
+                .Include(x => x.Owner)
+                .Include(x => x.Game);
         }
 
-        public async Task<GameEvent?> GetById(string id)
+        public async Task<GameEvent?> GetByIdAsync(string id)
         {
             return await repository.All<GameEvent>()
+                .Include(x =>x.Players)
+                .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -73,7 +79,7 @@ namespace GameHub.Logic.Services.Event
 
         public async Task<(GameEvent gameEvent, Common.Entities.Player player)> AddPlayerToEventAsync(string eventId, string playerName, string playerUserId)
         {
-            var gameEvent = await GetById(eventId);
+            var gameEvent = await GetByIdAsync(eventId);
             var player = ContainPlayer(eventId, playerName);
 
             if (gameEvent == null || player != null)
@@ -90,6 +96,22 @@ namespace GameHub.Logic.Services.Event
 
             return (gameEvent, newPlayer);
 
+        }
+
+        public async Task RemovePlayerFromEventByNameAsync(RequestAddPlayerToEvent parameters)
+        {
+            var players = (await GetByIdAsync(parameters.EventId))?
+                .Players;
+
+            if(players != null)
+            {
+                var player = players.FirstOrDefault(x => x.UsernameInGame == parameters.PlayerName);
+                players.Remove(player);
+
+                
+            }
+
+            await repository.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id)

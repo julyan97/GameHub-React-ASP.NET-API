@@ -25,6 +25,8 @@ export default function NavBar(props: INavBarProps) {
             .then(() => {
                 nav("/");
                 auth.setUserName("");
+                auth.setIsAuthentication(false)
+                auth.setId("");
             })
     }
 
@@ -43,7 +45,6 @@ export default function NavBar(props: INavBarProps) {
     //SignalR End
     return (
         <>
-
             <link rel="stylesheet" href="../../Root/css/index.css" />
             <link rel="stylesheet" href="../../Root/css/style.css" />
             <nav className="p-2" style={{ backgroundColor: '#1a031d62' }}>
@@ -71,7 +72,7 @@ export default function NavBar(props: INavBarProps) {
                                 <div className="btn-group" style={{ userSelect: "none", top: "50%", left: '50%', transform: 'translate(-50%, -50%) scale(1.2)' }}>
                                     <a
                                         className="nav-link waves-effect waves-light"
-                                        onClick={() => OutGoingNotificationMethods.SendNotification()}
+                                        onClick={() => OutGoingNotificationMethods.SendNotificationToAll()}
                                     >
                                         <span className="nav-link d-inline-block p-1 text-white">
                                             {Counter}
@@ -90,12 +91,12 @@ export default function NavBar(props: INavBarProps) {
                                     </div>
                                 </div>
                             </li>
-                            <li className='nav-item' onClick={()=>nav("/")} >
+                            <li className='nav-item' onClick={()=>nav("/home")} >
                                 <Icon type={faIgloo} />
                             </li>
-                            <li className='nav-item' >
+                            {/* <li className='nav-item' >
                                 <Icon type={faNewspaper} />
-                            </li>
+                            </li> */}
                             <li className='nav-item' onClick={()=>nav("/createEvent")} >
                                 <Icon type={faPlus} />
                             </li>

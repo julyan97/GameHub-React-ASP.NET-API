@@ -1,5 +1,9 @@
 export interface IContextModel
 {
+
+    id:string
+    setId:any
+
     username: string
     setUserName: any
 
