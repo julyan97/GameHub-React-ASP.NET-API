@@ -38,6 +38,7 @@ export function EventsPage(props: IEventsPageProps) {
             <div >
                 {GameEvents.map((x, i) => <GameEvent
                     key={x.id}
+                    ownerUserId={x.owner.userId}
                     id={x.id}
                     description={x.description}
                     discordUrl={x.discordUrl}

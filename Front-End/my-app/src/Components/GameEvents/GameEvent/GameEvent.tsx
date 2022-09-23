@@ -1,13 +1,15 @@
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup';
+import useAuth from '../../../Hooks/useAuth';
 import { EventService } from '../../../Services/EventService';
 import { OutGoingNotificationMethods } from '../../../Services/SignalRHelpers/OutGoingNotificationMethods';
 
 export interface IGameEventProps {
     id: string,
+    ownerUserId: string
     rank: string,
     players?: [],
     playerCount: number,
@@ -21,6 +23,7 @@ export interface IGameEventProps {
 
 export function GameEvent(props: IGameEventProps) {
     const navigate = useNavigate();
+    const auth = useAuth();
 
     const DeleteById = async () => {
         await EventService.RemoveById(props.id);
@@ -28,7 +31,7 @@ export function GameEvent(props: IGameEventProps) {
     }
     return (
         <>
-            <div 
+            <div
                 className=" d-inline-block text-left mt-5 container-style"
                 id="event-div"
                 style={{ width: "18rem" }}
@@ -56,11 +59,19 @@ export function GameEvent(props: IGameEventProps) {
                         </h5>
                     </div>
                 </div>
+
                 <div className='text-center'>
-                    <div onClick={() => DeleteById()} className="list-inline-item">
-                        <button className="btn btn-danger btn-sm rounded-0 fa fa-trash" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
-                            <FontAwesomeIcon icon={faTrash} /></button>
-                    </div>
+                    {
+                        auth.id === props.ownerUserId ?
+                            <div onClick={() => DeleteById()} className="list-inline-item">
+                                <button className="btn btn-danger btn-sm rounded-0 fa fa-trash" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
+                                    <FontAwesomeIcon icon={faTrash} /></button>
+                            </div> :
+                            <div onClick={() => DeleteById()} className="list-inline-item">
+                                <button className="btn btn-success btn-sm rounded-0 " type="button" data-toggle="tooltip" data-placement="top" title="Delete">
+                                    <FontAwesomeIcon icon={faPlus} /></button>
+                            </div>
+                    }
                 </div>
             </div>
 

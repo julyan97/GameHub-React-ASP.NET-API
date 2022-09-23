@@ -52,8 +52,6 @@ export class SignalRService {
     }
     //Connection element should be of type {name,method}
     static CreateEndPointMethods = async (connection: any) => {
-
-        
         useEffect(() => {
             this.tryConnect(connection)
 

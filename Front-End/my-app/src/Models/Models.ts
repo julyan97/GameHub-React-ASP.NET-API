@@ -10,5 +10,8 @@ export interface IContextModel
     setIsAuthentication: any
     isAuthenticated: boolean
 
+    setRoles?: any,
+    roles?: Array<string>,
+
     connection: any
 }

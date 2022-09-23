@@ -25,8 +25,9 @@ export default function NavBar(props: INavBarProps) {
             .then(() => {
                 nav("/");
                 auth.setUserName("");
-                auth.setIsAuthentication(false)
+                auth.setIsAuthentication(false);
                 auth.setId("");
+                auth.setRoles([]);
             })
     }
 

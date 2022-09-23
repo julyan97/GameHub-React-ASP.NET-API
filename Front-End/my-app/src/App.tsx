@@ -17,18 +17,23 @@ import { CreateEvent } from './Components/GameEvents/CreateEvent/CreateEvent';
 import { AuthService } from './Services/AuthService';
 import { EventsPage } from './Components/GameEvents/EventsPage/EventsPage';
 import { EventDetailsPage } from './Components/GameEvents/EventDetailsPage/EventDetailsPage';
+import RequireAuth from './Components/RequireAuth/RequireAuth';
 
 export const AuthContext = React.createContext<IContextModel>({
-  setId:null,
-  id:"",
+  setId: null,
+  id: "",
 
   setUserName: null,
   username: "",
 
   setIsAuthentication: null,
-  isAuthenticated :false,
+  isAuthenticated: false,
 
-  connection : null
+  setRoles: null,
+  roles: [],
+
+  connection: null
+
 });
 
 function App() {
@@ -36,21 +41,23 @@ function App() {
   const [Id, setId] = useState("")
   const [Name, setName] = useState("")
   const [Authentication, setAuthentication] = useState(false)
-  
+  const [Roles, setRoles] = useState<Array<string>>([])
+
   const auth = useContext(AuthContext)
 
   useEffect(() => {
     AuthService.isAuthenticated()
-        .then(data => {
-            setAuthentication(data.authenticated)
-            setName(data.userName);
-            setId(data.id);
+      .then(data => {
+        setAuthentication(data.authenticated)
+        setName(data.userName);
+        setId(data.id);
+        setRoles(data.roles)
 
-            // console.log(data.userName);
-            // console.log(data.authenticated);
-            // console.log(auth.isAuthenticated);
-        })
-},[])
+        // console.log(data.userName);
+        // console.log(data.authenticated);
+        // console.log(auth.isAuthenticated);
+      })
+  }, [])
 
   //SignalR SetUp Begin
   const ReceiveMessage = (message: string) => {
@@ -72,20 +79,34 @@ function App() {
       setUserName: setName,
       username: Name,
       setIsAuthentication: setAuthentication,
-      isAuthenticated : Authentication,
+      isAuthenticated: Authentication,
+      setRoles: setRoles,
+      roles: Roles,
+
       connection: Connection
     }}>
 
       <div className="App">
         <BrowserRouter>
-        <NavBar />
+          <NavBar />
           <Routes>
+
             <Route path='/' element={<Home />} />
+            {!Authentication ? 
+            <>
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
-            <Route path='/createEvent' element={<CreateEvent />} />
-            <Route path='/home' element={<EventsPage />} />
-            <Route path='/eventDetails' element={<EventDetailsPage />} />
+            </>: <></>
+            }
+
+            <Route element={<RequireAuth allowedRoles={["User", "Admin"]} />}>
+              <Route path='/createEvent' element={<CreateEvent />} />
+              <Route path='/home' element={<EventsPage />} />
+              <Route path='/eventDetails' element={<EventDetailsPage />} />
+            </Route>
+            
+            <Route path='*' element={<Home />} />
+
           </Routes>
         </BrowserRouter>
       </div>

@@ -17,6 +17,7 @@ export function Home(props: IHomeProps) {
             auth.setIsAuthentication(data.authenticated);
             auth.setId(data.id);
             auth.setUserName(data.userName)
+            auth.setRoles(data.roles)
         });
     }, [authenticated])
     

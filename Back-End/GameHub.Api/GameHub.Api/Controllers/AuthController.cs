@@ -48,13 +48,18 @@ public class AuthController : ControllerBase
                 });
             }
 
+            //User Logic
             var newUser = new User() { Email = user.Email, UserName = user.Email, };
             var isCreated = await _userManager.CreateAsync(newUser, user.Password);
-            var isRoleCreated = await _userManager.AddToRoleAsync(newUser, "User");
 
+            //Role logic
+            var isRoleCreated = await _userManager.AddToRoleAsync(newUser, "User");
             var roles = (await _userManager.GetRolesAsync(newUser));
 
-            if (isCreated.Succeeded && isRoleCreated.Succeeded)
+            //Has User been created nad role been aded to use
+            var HasSucceeded = isCreated.Succeeded && isRoleCreated.Succeeded;
+
+            if (HasSucceeded)
             {
                 var jwtToken = JwtHelper.GenerateJwtToken(newUser, _jwtConfig, String.Join(", ",roles));
 
@@ -159,10 +164,15 @@ public class AuthController : ControllerBase
     public IActionResult Authenticate()
     {
         string email = string.Empty;
+        List<string> roles = new();
         if (User.Claims != null && User.Claims.Count() > 0)
         {
             var claims = User.Claims.ToList();
             email = claims[1].Value ?? string.Empty;
+            roles = claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)
+                .Value
+                .Split(", ")
+                .ToList();
         }
 
 
@@ -171,6 +181,7 @@ public class AuthController : ControllerBase
             Id = User.Claims?.FirstOrDefault(x => x.Type == "Id")?.Value,
             Authenticated = User.Identity.IsAuthenticated,
             UserName = email,
+            Roles = roles
         });
     }
 }

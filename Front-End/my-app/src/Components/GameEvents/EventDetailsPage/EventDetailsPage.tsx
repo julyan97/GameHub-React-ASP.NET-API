@@ -11,13 +11,11 @@ export interface IEventDetailsPageProps {
 
 export function EventDetailsPage(props: IEventDetailsPageProps) {
     const { state } = useLocation()
-    const nav = useNavigate()
     const playerName: any = useRef(null)
 
     const auth = useContext(AuthContext)
     const [Players, setPlayers] = useState(state.event.players);
     const [Rerender, setRerender] = useState(0)
-    const [Counter, setCounter] = useState(0);
 
     useEffect(() => {
         EventService.GetById(state.event.id)
@@ -35,7 +33,7 @@ export function EventDetailsPage(props: IEventDetailsPageProps) {
         }
         await EventService.RemovePlayerFromEvent(params)
         await OutGoingNotificationMethods.UpdateAllNotificationDetails();
-        setRerender(Math.random() + Rerender);
+        setRerender(Math.random());
     }
 
     const JoinEvent = async (e: any) => {
@@ -53,7 +51,7 @@ export function EventDetailsPage(props: IEventDetailsPageProps) {
         
         console.log(Rerender);
         console.log(auth.username);
-        setRerender(Math.random() + Rerender)
+        setRerender(Math.random())
 
     }
 
@@ -114,11 +112,15 @@ export function EventDetailsPage(props: IEventDetailsPageProps) {
                                     <div key={i}>
                                         <li style={{ fontSize: 20, wordSpacing: "100px", marginBottom: "4px" }} className="card-text ml-4 text-white">
                                             <div style={{ paddingRight: "4px", display: "inline-block" }}>{x.usernameInGame}</div>
+                                            {auth.id === state.event.ownerUserId ?
                                             <button
                                                 type="button"
                                                 className="btn btn-danger"
                                                 style={{ float: "right" }}
-                                                onClick={() => RemovePlayerFromEvent(x.usernameInGame)}>Delete</button>
+                                                onClick={() => RemovePlayerFromEvent(x.usernameInGame)}>Delete
+                                            </button>
+                                            :<></>
+                                            }
                                         </li>
                                         <br />
                                     </div>
