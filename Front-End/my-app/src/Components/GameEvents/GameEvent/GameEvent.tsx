@@ -67,8 +67,8 @@ export function GameEvent(props: IGameEventProps) {
                                 <button className="btn btn-danger btn-sm rounded-0 fa fa-trash" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
                                     <FontAwesomeIcon icon={faTrash} /></button>
                             </div> :
-                            <div onClick={() => DeleteById()} className="list-inline-item">
-                                <button className="btn btn-success btn-sm rounded-0 " type="button" data-toggle="tooltip" data-placement="top" title="Delete">
+                            <div className="list-inline-item">
+                                <button className="btn btn-success btn-sm rounded-0 " type="button" data-toggle="tooltip" data-placement="top" title="Join">
                                     <FontAwesomeIcon icon={faPlus} /></button>
                             </div>
                     }

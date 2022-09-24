@@ -1,4 +1,6 @@
-﻿using GameHub.SignalR.Hubs.Clients;
+﻿using GameHub.Common.Entities;
+using GameHub.DAL.Repositories.Interfaces;
+using GameHub.SignalR.Hubs.Clients;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
@@ -13,6 +15,12 @@ namespace GameHub.SignalR.Hubs
     public class NotificationHub : Hub<INotification>
     {
         public static Dictionary<string?, UserConnectionIndentity> UserConnectionIdentities = new();
+        private readonly IRepository repository;
+
+        public NotificationHub(IRepository repository)
+        {
+            this.repository=repository;
+        }
 
         public async Task SendNotificationToAll()
         {
@@ -29,10 +37,13 @@ namespace GameHub.SignalR.Hubs
             await Clients.Group(groupId).NotificationsUpdate();
         }
 
-        public async Task SendNotificationToUser(string userName)
+        public async Task SendNotificationToUser(string userId)
         {
-            var userId = UserConnectionIdentities[userName].UserIndentifier;
-            await Clients.User(userId).NotificationsUpdate();
+            var userName = repository.AllReadOnly<User>(x => x.Id == userId)
+                .FirstOrDefault()?
+                .Email;
+            var userIdentifier = UserConnectionIdentities[userName].UserIndentifier;
+            await Clients.User(userIdentifier).NotificationsUpdate();
         }
 
         public async Task UpdateAllNotificationDetails()

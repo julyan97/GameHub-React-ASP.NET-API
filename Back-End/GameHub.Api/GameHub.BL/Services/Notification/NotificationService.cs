@@ -29,12 +29,21 @@ namespace GameHub.Logic.Services.Notification
                 .SendAsync("NotificationsUpdate", param);
         }
 
-        public IEnumerable<Common.Entities.Notification> GetUserNotifications(string userId)
+        public IEnumerable<Common.Entities.Notification> GetNotificationsByUserId(string userId)
         {
             return repository.All<Common.Entities.User>()
                 .Include(x => x.NotificationsRecived)
                 .FirstOrDefault(x => x.Id == userId)
                 .NotificationsRecived;
+        }
+
+        public async Task SetNotificationAsync(string NotificattionId, bool isRead)
+        {
+            var notification = repository.All<Common.Entities.Notification>()
+                .FirstOrDefault(x => x.Id == NotificattionId);
+            notification.IsRead = isRead;
+
+            await repository.SaveChangesAsync();
         }
 
         public async Task SaveAsync()

@@ -26,7 +26,7 @@ export function EventDetailsPage(props: IEventDetailsPageProps) {
     }, [Rerender])
 
 
-    const RemovePlayerFromEvent =async (playerName: string) => {
+    const RemovePlayerFromEvent = async (playerName: string) => {
         const params: any = {
             eventId: state.event.id,
             playerName: playerName
@@ -45,23 +45,79 @@ export function EventDetailsPage(props: IEventDetailsPageProps) {
 
         await EventService.JoinEvent(params)
         await OutGoingNotificationMethods.AddToGroup(state.event.id, auth.username)
-        await OutGoingNotificationMethods.SendNotificationToUser(auth.username);
+        await OutGoingNotificationMethods.SendNotificationToUser(state.event.ownerUserId);
         await OutGoingNotificationMethods.UpdateAllNotificationDetails();
         //await OutGoingNotificationMethods.SendNotificationToGroup(state.event.id);
-        
+
         console.log(Rerender);
         console.log(auth.username);
         setRerender(Math.random())
 
     }
 
-        //SignalR Begin
+    const AcceptPlayer= async (playerName: string) =>{
+        const params ={
+            eventId: state.event.id,
+            playerName: playerName,
+            status: true
+        }
 
-        SignalRService.RegisterIncomingMethods([
-            { name: "ReRenderDetails", method: () => setRerender(Math.random() + Rerender) }
-        ],false);
-    
-        //SignalR End
+        await EventService.ChangePlayerStatus(params);
+        await OutGoingNotificationMethods.UpdateAllNotificationDetails();
+    }
+    const VizualizePlayers =()=>{
+        
+        const playersIfOwnedEvent = (<>
+                                        {Players.map((x: any, i: number) =>
+                                    <div key={i}>
+                                        <li style={{ fontSize: 20, wordSpacing: "100px", marginBottom: "4px" }} className="card-text ml-4 text-white">
+                                            <div style={{ paddingRight: "4px", display: "inline-block" }}>{x.usernameInGame}</div>
+                                            
+                                                <>
+
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        style={{ float: "right" }}
+                                                        onClick={() => RemovePlayerFromEvent(x.usernameInGame)}>Delete
+                                                    </button>
+                                                    {x.status === false ?
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-success"
+                                                            style={{ float: "right" }}
+                                                            onClick={() => AcceptPlayer(x.usernameInGame)}>Accept
+                                                        </button> : <></>
+                                                    }
+                                                </>
+                                                : <></>
+                                            
+                                        </li>
+                                        <br />
+                                    </div>
+                                )}
+        </>);
+
+        const playerIfNotOwnedEvent = (<>
+                                {Players.filter((x: any) => x.status === true).map((x: any, i: number) =>
+                                    <div key={i}>
+                                        <li style={{ fontSize: 20, wordSpacing: "100px", marginBottom: "4px" }} className="card-text ml-4 text-white">
+                                            <div style={{ paddingRight: "4px", display: "inline-block" }}>{x.usernameInGame}</div>
+                                        </li>
+                                        <br />
+                                    </div>
+                                )}
+        </>)
+        
+        return auth.id === state.event.ownerUserId ? playersIfOwnedEvent : playerIfNotOwnedEvent;
+    }
+    //SignalR Begin
+
+    SignalRService.RegisterIncomingMethods([
+        { name: "ReRenderDetails", method: () => setRerender(Math.random()) }
+    ], false);
+
+    //SignalR End
     return (
         <div className='text-center'>
             <div
@@ -108,23 +164,7 @@ export function EventDetailsPage(props: IEventDetailsPageProps) {
                             </h6>
                             <ul style={{}}>
 
-                                {Players.map((x: any, i: number) =>
-                                    <div key={i}>
-                                        <li style={{ fontSize: 20, wordSpacing: "100px", marginBottom: "4px" }} className="card-text ml-4 text-white">
-                                            <div style={{ paddingRight: "4px", display: "inline-block" }}>{x.usernameInGame}</div>
-                                            {auth.id === state.event.ownerUserId ?
-                                            <button
-                                                type="button"
-                                                className="btn btn-danger"
-                                                style={{ float: "right" }}
-                                                onClick={() => RemovePlayerFromEvent(x.usernameInGame)}>Delete
-                                            </button>
-                                            :<></>
-                                            }
-                                        </li>
-                                        <br />
-                                    </div>
-                                )}
+{/* here */}        {VizualizePlayers()}
 
                             </ul>
                         </div>

@@ -21,6 +21,7 @@ namespace GameHub.Common.Entities
         public string UsernameInGame { get; set; }
 
         [ForeignKey(nameof(UserId))]
+        [JsonIgnore]
         public virtual User User { get; set; }
 
         [JsonIgnore]

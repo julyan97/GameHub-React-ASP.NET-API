@@ -63,6 +63,9 @@ namespace GameHub.Logic.Services.Event
             return await repository.All<GameEvent>()
                 .Include(x =>x.Players)
                 .ThenInclude(x => x.User)
+                .Include(x => x.Owner)
+                .ThenInclude(x => x.User)
+                .ThenInclude(x => x.NotificationsRecived)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 

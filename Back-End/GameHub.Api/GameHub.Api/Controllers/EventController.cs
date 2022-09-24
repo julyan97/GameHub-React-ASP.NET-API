@@ -3,6 +3,7 @@ using GameHub.Common.Entities;
 using GameHub.Common.Models.RequestModels.GameEvent;
 using GameHub.Logic.Services.Event;
 using GameHub.Logic.Services.Notification;
+using GameHub.Logic.Services.Player;
 using GameHub.SignalR.Hubs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +20,18 @@ namespace GameHub.Api.Controllers
         public readonly IMapper _mapper;
         private readonly IEventService eventService;
         private readonly INotificationService notificationService;
+        private readonly IPayerService payerService;
 
         public EventController(
             IMapper mapper,
             IEventService eventService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IPayerService payerService)
         {
             _mapper = mapper;
             this.eventService=eventService;
             this.notificationService=notificationService;
+            this.payerService=payerService;
         }
 
         [HttpGet("Events")]
@@ -75,26 +79,21 @@ namespace GameHub.Api.Controllers
             {
                 var tuple = await eventService.AddPlayerToEventAsync(request.EventId, request.PlayerName, userId);
 
-                //var notification = new Notification()
-                //{
+                var notification = new Notification()
+                {
 
-                //    Message = "Player " + request.PlayerName + " wants to join your event.",
-                //    SenderId = tuple.player.User.Id,
-                //    RecipientId = tuple.gameEvent.Owner.User.Id,
-                //    GameEvent = tuple.gameEvent,
-                //    IsRead = false
+                    Message = "Player " + request.PlayerName + " wants to join your event.",
+                    SenderId = tuple.player.User.Id,
+                    RecipientId = tuple.gameEvent.OwnerId,
+                    GameEvent = tuple.gameEvent,
+                    IsRead = false
 
-                //};
-                //tuple.gameEvent.Owner.User.NotificationsRecived.Add(notification);
-                //await notificationService.SaveAsync();
+                };
+                tuple.gameEvent.Owner.User.NotificationsRecived.Add(notification);
+                await notificationService.SaveAsync();
 
-                //var notifications = notificationService.GetUserNotifications(tuple.gameEvent.Owner.User.Id);
+               // var notifications = notificationService.GetUserNotifications(tuple.gameEvent.Owner.User.Id);
 
-                //await notificationService.Send(tuple.gameEvent.Owner.User.UserName, new
-                //{
-                //    Notifications = notifications.OrderByDescending(x => x.CreatedAt).ToArray(),
-                //    NotCount = tuple.gameEvent.Owner.User.NotificationsRecived.Count(n => n.IsRead == false)
-                //});
             }
             catch(Exception e)
             {
@@ -118,6 +117,21 @@ namespace GameHub.Api.Controllers
             }
 
             return Ok("Successfuly added player");
+        }
+
+        [HttpPost("ChangePlayerStatus")]
+        public async Task<IActionResult> RemovePlayerToEvent(RequestChangePlayerStatus request)
+        {
+            try
+            {
+                await payerService.ChangeStatusAsync(request);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+
+            return Ok("Successfuly changed Status");
         }
     }
 }

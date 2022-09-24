@@ -32,9 +32,6 @@ export function EventsPage(props: IEventsPageProps) {
     //SignalR End
     return (
         <>
-            <h6 className='text-white'>
-                {ReRender }
-            </h6>
             <div >
                 {GameEvents.map((x, i) => <GameEvent
                     key={x.id}

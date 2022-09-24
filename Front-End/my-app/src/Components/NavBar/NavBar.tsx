@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../App';
 import logo from "../../Root/img/output-onlinepngtools.png"
 import { AuthService } from '../../Services/AuthService';
+import { NotificationService } from '../../Services/NotificationService';
 import { OutGoingNotificationMethods } from '../../Services/SignalRHelpers/OutGoingNotificationMethods';
 import { SignalRService } from '../../Services/SignalRHelpers/SignalRService';
 import { Icon } from './Awsome-Icons/Icon';
@@ -16,6 +17,7 @@ export interface INavBarProps {
 export default function NavBar(props: INavBarProps) {
     const [userName, setUserName] = useState("");
     const [Counter, setCounter] = useState(0)
+    const [Notifications, setNotifications] = useState<Array<any>>([])
 
     const nav = useNavigate();
     const auth = useContext(AuthContext)
@@ -31,17 +33,32 @@ export default function NavBar(props: INavBarProps) {
             })
     }
 
-    const NotificationsUpdate = () => {
-        console.log("here counter: " + Counter)
-        setCounter(Math.random());
+    useEffect(() => {
+        NotificationsUpdate();
+    }, [])
 
+    const NotificationsUpdate = async () => {
+
+        await NotificationService.GetAll()
+            .then((res: Array<any>) => {
+                setCounter(res.filter(x => x.isRead === false).length);
+                setNotifications(res);
+                console.log(res)
+                console.log(res.filter(x => x.isRead == true).length)
+            })
+
+    }
+
+    const SetNotificationToRead = async (notificationId : string) =>{
+        await NotificationService.SetToRead(notificationId);
+        await NotificationsUpdate(); 
     }
 
     //SignalR Begin
 
     SignalRService.RegisterIncomingMethods([
         { name: "NotificationsUpdate", method: NotificationsUpdate }
-    ],false);
+    ], false);
 
     //SignalR End
     return (
@@ -51,7 +68,7 @@ export default function NavBar(props: INavBarProps) {
             <nav className="p-2" style={{ backgroundColor: '#1a031d62' }}>
 
                 <div style={{ float: 'left', display: 'inline-block', margin: "-10px" }}>
-                    <a style={{ color: 'rgb(255, 255, 255)', padding: 0, marginLeft: '10%' }} className={style.nav_link} onClick={()=>nav("/")}>
+                    <a style={{ color: 'rgb(255, 255, 255)', padding: 0, marginLeft: '10%' }} className={style.nav_link} onClick={() => nav("/")}>
                         <img src={logo} style={{ height: '2em', width: '9em' }} />
                     </a>
                 </div>
@@ -59,10 +76,10 @@ export default function NavBar(props: INavBarProps) {
 
                     {!auth.isAuthenticated ? (<>
                         <li className="nav-item">
-                            <a className={style.nav_link} style={{ color: 'rgb(255, 255, 255)' }} onClick={()=>nav("/login")}>Login</a>
+                            <a className={style.nav_link} style={{ color: 'rgb(255, 255, 255)' }} onClick={() => nav("/login")}>Login</a>
                         </li>
                         <li className="nav-item">
-                            <a className={style.nav_link} style={{ color: 'rgb(255, 255, 255)' }} onClick={()=>nav("/register")}>Register</a>
+                            <a className={style.nav_link} style={{ color: 'rgb(255, 255, 255)' }} onClick={() => nav("/register")}>Register</a>
                         </li>
                     </>) :
                         (<>
@@ -71,34 +88,51 @@ export default function NavBar(props: INavBarProps) {
                             </li>
                             <li className=' nav-item'>
                                 <div className="btn-group" style={{ userSelect: "none", top: "50%", left: '50%', transform: 'translate(-50%, -50%) scale(1.2)' }}>
-                                    <a
-                                        className="nav-link waves-effect waves-light"
-                                        onClick={() => OutGoingNotificationMethods.SendNotificationToAll()}
-                                    >
-                                        <span className="nav-link d-inline-block p-1 text-white">
-                                            {Counter}
-                                        </span>
-                                        <FontAwesomeIcon icon={faBell} className="nav-link active d-inline-block p-0" style={{ color: "white" }} color="red" />
-                                    </a>
-                                    <div
-                                        className="my-custom-scrollbar my-custom-scrollbar-primary dropdown-menu dropdown-menu-lg-left dropdown-secondary mt-1 "
-                                        id="nott"
-                                        style={{}}
-                                        data-mdb-perefect-scrollbar=""
-                                        data-mdb-suppress-scroll-x="true"
-                                        aria-labelledby="navbarDropdownMenuLink-5"
-                                    >
-                                        <span>No notifications found</span>
+                                    <div className="dropdown">
+                                        <a
+                                            style={{boxSizing:"border-box",padding:"0.2px",borderRadius:"30%",marginRight:"1em"}}
+                                            className="nav-link waves-effect waves-light"
+                                            role="button"
+                                            id="dropdownMenuLink"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <span className="nav-link d-inline-block p-1 text-white">
+                                                {Counter}
+                                            </span>
+                                            <FontAwesomeIcon icon={faBell} className="nav-link active d-inline-block p-0" style={{ color: "white" }} />
+                                        </a>
+                                        <ul
+
+                                            id='nott' className="my-custom-scrollbar my-custom-scrollbar-primary dropdown-menu text-white"
+                                            aria-labelledby="dropdownMenuLink">
+                                            {Notifications.map(x =>
+                                            {
+                                                let NotificationRead =""
+                                                if(x.isRead === false)
+                                                NotificationRead = "red"
+
+                                                return(
+                                                <li key={x.id} className='d-block' onClick={() => SetNotificationToRead(x.id)}>
+                                                    <a style={{ textDecoration: "none", color: "white" ,background:`${NotificationRead}`} }>
+                                                        {x.message}
+                                                    </a>
+                                                </li>
+                                                )
+                                            }
+                                            )}
+
+                                        </ul>
                                     </div>
                                 </div>
                             </li>
-                            <li className='nav-item' onClick={()=>nav("/home")} >
+                            <li className='nav-item' onClick={() => nav("/home")} >
                                 <Icon type={faIgloo} />
                             </li>
                             {/* <li className='nav-item' >
                                 <Icon type={faNewspaper} />
                             </li> */}
-                            <li className='nav-item' onClick={()=>nav("/createEvent")} >
+                            <li className='nav-item' onClick={() => nav("/createEvent")} >
                                 <Icon type={faPlus} />
                             </li>
                             <li className="nav-item" onClick={() => LOgOut()}>

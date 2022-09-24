@@ -7,6 +7,7 @@ using GameHub.DAL.Repositories.Interfaces;
 using GameHub.Logic.Services.Event;
 using GameHub.Logic.Services.Game;
 using GameHub.Logic.Services.Notification;
+using GameHub.Logic.Services.Player;
 using GameHub.Logic.Services.User;
 using GameHub.SignalR.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IPayerService, PayerService>();
 
 // Add services to the container.
 

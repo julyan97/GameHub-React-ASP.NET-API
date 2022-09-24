@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GameHub.Common.Entities
@@ -29,9 +30,11 @@ namespace GameHub.Common.Entities
         public virtual GameEvent GameEvent { get; set; }
 
         [ForeignKey(nameof(SenderId))]
+        [JsonIgnore]
         public virtual User Sender { get; set; }
 
         [ForeignKey(nameof(RecipientId))]
+        [JsonIgnore]
         public virtual User Recipient { get; set; }
 
         public Notification()

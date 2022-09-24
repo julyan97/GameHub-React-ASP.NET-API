@@ -66,4 +66,16 @@ export class EventService{
             body: JSON.stringify(params)
         });
     }
+
+    static ChangePlayerStatus = async (params: any) => {
+        const res = await fetch(`${this.host}/ChangePlayerStatus`, {
+            method: "Post",
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            credentials: "include",
+            body: JSON.stringify(params)
+        });
+    }
 }

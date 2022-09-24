@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GameHub.Common\GameHub.Common.csproj" />
+    <ProjectReference Include="..\GameHub.DAL\GameHub.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
