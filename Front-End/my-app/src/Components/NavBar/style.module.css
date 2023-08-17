@@ -1,0 +1,16 @@
+.nav_link {
+        color: #007bff;
+        text-decoration: none;
+        background-color: transparent;
+            display: inline-block !important;
+    padding: 1rem 1rem !important;
+}
+
+li{
+    
+    display: inline-block;
+}
+
+ul{
+    text-align: end;
+}

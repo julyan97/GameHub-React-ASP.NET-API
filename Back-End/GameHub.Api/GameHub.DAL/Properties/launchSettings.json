@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "GameHub.DAL": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53873;http://localhost:53877"
+    }
+  }
+}
